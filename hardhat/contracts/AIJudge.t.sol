@@ -45,29 +45,16 @@ contract AIJudgeTest is Test {
     function test_CreateBountyStoresDeadlines() public {
         (uint256 bountyId, uint256 commitDeadline, uint256 revealDeadline) = _createBounty();
 
-        (
-            address bOwner,
-            ,
-            ,
-            uint256 reward,
-            uint256 storedCommitDeadline,
-            uint256 storedRevealDeadline,
-            bool judged,
-            bool finalized,
-            uint256 submissionCount,
-            uint256 revealedCount,
-            ,
+        AIJudge.BountyView memory b = judge.getBounty(bountyId);
 
-        ) = judge.getBounty(bountyId);
-
-        assertEq(bOwner, owner);
-        assertEq(reward, 1 ether);
-        assertEq(storedCommitDeadline, commitDeadline);
-        assertEq(storedRevealDeadline, revealDeadline);
-        assertEq(judged, false);
-        assertEq(finalized, false);
-        assertEq(submissionCount, 0);
-        assertEq(revealedCount, 0);
+        assertEq(b.owner, owner);
+        assertEq(b.reward, 1 ether);
+        assertEq(b.commitDeadline, commitDeadline);
+        assertEq(b.revealDeadline, revealDeadline);
+        assertEq(b.judged, false);
+        assertEq(b.finalized, false);
+        assertEq(b.submissionCount, 0);
+        assertEq(b.revealedCount, 0);
     }
 
     function test_CreateBountyRevertsWithoutReward() public {
