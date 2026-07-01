@@ -284,43 +284,43 @@ contract AIJudge is PrecompileConsumer {
         emit WinnerFinalized(bountyId, winnerIndex, winner, reward);
     }
 
+    // Grouped into a struct (instead of many individual named return values)
+    // to avoid a "stack too deep" compiler error.
+    struct BountyView {
+        address owner;
+        string title;
+        string rubric;
+        uint256 reward;
+        uint256 commitDeadline;
+        uint256 revealDeadline;
+        bool judged;
+        bool finalized;
+        uint256 submissionCount;
+        uint256 revealedCount;
+        uint256 winnerIndex;
+        bytes aiReview;
+    }
+
     function getBounty(
         uint256 bountyId
-    )
-        external
-        view
-        bountyExists(bountyId)
-        returns (
-            address owner,
-            string memory title,
-            string memory rubric,
-            uint256 reward,
-            uint256 commitDeadline,
-            uint256 revealDeadline,
-            bool judged,
-            bool finalized,
-            uint256 submissionCount,
-            uint256 revealedCount,
-            uint256 winnerIndex,
-            bytes memory aiReview
-        )
-    {
+    ) external view bountyExists(bountyId) returns (BountyView memory) {
         Bounty storage bounty = bounties[bountyId];
 
-        return (
-            bounty.owner,
-            bounty.title,
-            bounty.rubric,
-            bounty.reward,
-            bounty.commitDeadline,
-            bounty.revealDeadline,
-            bounty.judged,
-            bounty.finalized,
-            bounty.submissions.length,
-            bounty.revealedCount,
-            bounty.winnerIndex,
-            bounty.aiReview
-        );
+        return
+            BountyView({
+                owner: bounty.owner,
+                title: bounty.title,
+                rubric: bounty.rubric,
+                reward: bounty.reward,
+                commitDeadline: bounty.commitDeadline,
+                revealDeadline: bounty.revealDeadline,
+                judged: bounty.judged,
+                finalized: bounty.finalized,
+                submissionCount: bounty.submissions.length,
+                revealedCount: bounty.revealedCount,
+                winnerIndex: bounty.winnerIndex,
+                aiReview: bounty.aiReview
+            });
     }
 
     /// @notice Returns submission metadata. `answer` is empty string until
